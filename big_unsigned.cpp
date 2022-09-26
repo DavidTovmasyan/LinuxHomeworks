@@ -12,7 +12,7 @@ BigUnsigned::BigUnsigned(std::string& s){
     }
 }
 
-BigUnsigned& BigUnsigned::operator+=(BigUnsigned &a,const BigUnsigned& b){
+BigUnsigned& BigUnsigned::operator+=(const BigUnsigned& b){
     int t = 0, s, i;
     int n = Length(a), m = Length(b);
     if(m > n)
