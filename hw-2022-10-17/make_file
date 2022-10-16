@@ -1,0 +1,9 @@
+task2: main.o str.o
+	gcc main.o str.o -o -Werror -Wall -g -fsanitize=address,undefined  output
+main.o: main.c
+	gcc -c -Werror -Wall -g -fsanitize=address,undefined main.c
+str.o: str.c str.h
+	gcc -c -Werror -Wall -g -fsanitize=address,undefined str.c
+clean:
+	rm *.o task2
+
