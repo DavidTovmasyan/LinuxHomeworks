@@ -13,8 +13,9 @@ int main(int argc, char* argv[]){
 			perror(argv[2]);
 			return 1;
 		}
-		scanf("%d", &x);
-		write(fd, &x, sizeof(x));
+		while( scanf("%d", &x) != EOF ){
+			write(fd, &x, sizeof(x));
+		}
 		close(fd);
 	}
 	else if(strcmp(argv[1], "print") == 0){
