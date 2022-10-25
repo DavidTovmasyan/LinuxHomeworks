@@ -3,15 +3,15 @@
 
 int main(int argc,char* argv[]){
 	int a;
-	sscanf(argv[1],"%i",&a);
-	char symbol[1];
-	sscanf(argv[2],"%s",symbol);
 	int b;
-	sscanf(argv[3],"%i",&b);
-	if(!strcmp(symbol, "+"))
-		a+=b;
-	if(!strcmp(symbol, "*"))
-		a*=b;
-	printf("%d\n",a);
+	int res;
+       	sscanf(argv[1], "%i", &a);
+	sscanf(argv[3], "%i", &b);
+	if(!strcmp(argv[2], "*"))
+                res = a * b;
+	if(!strcmp(argv[2], "+"))
+		res = a + b;
+	printf("%i %i\n",a, b); 
+	printf("%i\n", res);
 	return 0;
 }

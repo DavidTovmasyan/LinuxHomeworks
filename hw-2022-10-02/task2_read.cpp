@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "task2_read.cpp"
+#include "task2_read.hpp"
 
 void read_and_invert(){
 	printf("Enter the string: ");
@@ -15,7 +15,3 @@ void read_and_invert(){
    	putchar('\n');
 }
 
-int main(){
-	read_and_invert();
-	return 0;
-}
