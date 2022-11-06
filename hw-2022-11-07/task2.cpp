@@ -23,7 +23,7 @@ int main(int argc, char* argv[]){
 	char* arguments[20];
 	n = i;
 	arguments[0] = words[0];
-	for(i = 1;i<n;++i){
+	for(i = 1;i<n-1;++i){
 		arguments[i] = words[i+1];
 	}
 	if(fork() > 0){
