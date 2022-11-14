@@ -8,14 +8,14 @@ int main(int argc, char* argv[]){
 		perror(NULL);
 		exit(1);
 	}
-	char buf[] = "abcdef";
+	char filler = 'a';
 	int pipeSize = 0;
 	int n;
-	close(fdPipe[0]);
-	while( (n = write(fdPipe[1], buf, 6) ) > 0 ){
-
+	while( (n = write(fdPipe[1], &filler, sizeof(filler)) ) > 0 ){
 		pipeSize += n;
+		printf("%d\n", pipeSize);
 	}
-	printf("%d\n",pipeSize);
+	close(fdPipe[0]);
+	close(fdPipe[1]);
 	return 0;
 }
