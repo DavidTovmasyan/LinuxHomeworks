@@ -13,11 +13,10 @@ int main(int argc, char* argv[]){
 	char buf[BUF_SIZE];
 	int i;
 	int n;
-	while((n = read(fd, buf, BUF_SIZE)) > 0){
-		for(i=0;i<n;++i){
-			if(buf[i] == ' ' || buf[i] == '\n'){
-				buf[i] = '\0';
-			}
+	n = read(fd, buf, sizeof(buf));
+	for(i=0;i<n;++i){
+		if(buf[i] == ' ' || buf[i] == '\n'){
+			buf[i] = '\0';
 		}
 	}
 	close(fd);
@@ -30,12 +29,21 @@ int main(int argc, char* argv[]){
 			++j;
 		}
 	}
+	words[j] = NULL;
+
+	char* args[j+1];
+	args[0] = words[0];
+	for(i = 1; i < j; ++i){
+		args[i] = words[i+1];
+	}
+//for debug	printf("%s %s %s %s\n", args[0], args[1], args[2], args[3]);
 	if(fork() == 0){
 		int inputFd = open(words[1], O_RDONLY);
 		dup2(inputFd, 0);
 		close(inputFd);
-		execvp(words[0], words);
+		execvp(args[0], args);
 		exit(1);
 	}
+
 	return 0;
 }
