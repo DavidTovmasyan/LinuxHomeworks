@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <ctype.h>
 #include <errno.h>
@@ -36,14 +37,18 @@ int main(int argc, char* argv[]){
 	for(i = 1; i < j; ++i){
 		args[i] = words[i+1];
 	}
-//for debug	printf("%s %s %s %s\n", args[0], args[1], args[2], args[3]);
+//	printf("%s %s %s %s\n", args[0], args[1], args[2], args[3]);
 	if(fork() == 0){
 		int inputFd = open(words[1], O_RDONLY);
+		if(inputFd == -1){
+			perror(NULL);
+			exit(1);
+		}
 		dup2(inputFd, 0);
 		close(inputFd);
 		execvp(args[0], args);
 		exit(1);
 	}
-
+	wait(NULL);
 	return 0;
 }
