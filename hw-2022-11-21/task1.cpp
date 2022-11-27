@@ -47,10 +47,12 @@ int main(int argc, char* argv[]){
 		execvp(argv[3], args);
 		exit(1);
 	}
-	wait(NULL);
 	close(pipeFd_1_2[0]);
 	close(pipeFd_1_2[1]);
 	close(pipeFd_2_3[0]);
 	close(pipeFd_2_3[1]);
+	wait(NULL);
+	wait(NULL);
+	wait(NULL);
 	return 0;
 }

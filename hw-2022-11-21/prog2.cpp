@@ -16,9 +16,6 @@ int main(int argc, char* argv[]){
 	kill(child, n);
 	int status;
 	wait(&status);
-	if(WIFEXITED(status)){
-		printf("Exited: %d\n", WEXITSTATUS(status));
-	}
 	if(WIFSIGNALED(status)){
 		printf("Signaled: %d\n", WTERMSIG(status));
 	}
