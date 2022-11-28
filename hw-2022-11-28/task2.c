@@ -25,8 +25,9 @@ int main(int argc, char* argv[]){
 	char str[] = "Hello world";
 	if(fork() == 0){
 		close(fd[0]);
-		while(1)
+		while(1){
 			writtenBites += write(fd[1], str, strlen(str));
+		}
 	}
 	char buf[6];
 	if(fork() == 0){
@@ -34,6 +35,7 @@ int main(int argc, char* argv[]){
 		read(fd[0], buf, 5);
 		buf[5] = '\0';
 		printf("%s\n", buf);
+		close(fd[0]);
 		exit(0);
 	}
 	close(fd[0]);
