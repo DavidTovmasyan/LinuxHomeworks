@@ -2,26 +2,20 @@
 #include <unistd.h>
 #include <pthread.h>
 
-int num;
-
 void * f0(void *){
-	num = 0;
-	printf("%d\n", num);
+	printf("0\n");
 }
 
 void * f1(void *){
-        num = 1;
-        printf("%d\n", num);
+        printf("1\n");
 }
 
 void * f2(void *){
-        num = 2;
-        printf("%d\n", num);
+        printf("2\n");
 }
 
 void * f3(void *){
-        num = 3;
-        printf("%d\n", num);
+        printf("3\n");
 }
 
 int main(void){
