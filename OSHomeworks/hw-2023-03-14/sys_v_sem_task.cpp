@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
+#include <sys/shm.h>
 #include <errno.h>
 #include <iostream>
 #include <sys/wait.h>
@@ -37,63 +38,80 @@ int main(){
     	}
 
     	// initialize the semaphore value to 0
-    	semarg.val = 0;
-    	if (semctl(semid, 0, SETVAL, semarg) == -1) {
+    	semarg.val = 1;
+     	if (semctl(semid, 0, SETVAL, semarg) == -1) {
         	error("semctl");
-    	}
+     	}
+
+	//creating a shared memory
+	int shm_id = shmget(5678, sizeof(int), IPC_CREAT | 0666);
+
+	if(shm_id == -1){
+		perror("Couldnt create the shm");
+		exit(1);
+	}
+
+	int* shared_value = (int*) shmat(shm_id, NULL, 0);
+	*shared_value = 0;
+//	shmdt(shared_value);
 
 	pid_t child1, child2;
 	(child1 = fork()) && (child2 = fork());
 
 	if(child1 == 0){
-		// acquire the semaphore
-    		semops.sem_num = 0;
-    		semops.sem_op = -1;
-    		semops.sem_flg = 0;
-    		if (semop(semid, &semops, 1) == -1) {
-        		error("semop");
-    		}
-		//
-		for(int i = 0; i < 10000; ++i){
-			++semarg.val;
-		}
+		int* shared_value = (int*) shmat(shm_id, NULL, 0);
+		for(int i = 0;i<10000;++i){
+			// acquire the semaphore
+    			semops.sem_num = 0;
+    			semops.sem_op = -1;
+    			semops.sem_flg = 0;
+    			if (semop(semid, &semops, 1) == -1) {
+        			error("semop");
+    			}
+			//
 
-		// release the semaphore
-    		semops.sem_num = 0;
-    		semops.sem_op = 1;
-    		semops.sem_flg = 0;
-    		if (semop(semid, &semops, 1) == -1) {
-        		error("semop");
-    		}
-		//
+			(*shared_value)++;
+
+			// release the semaphore
+    			semops.sem_num = 0;
+    			semops.sem_op = 1;
+    			semops.sem_flg = 0;
+    			if (semop(semid, &semops, 1) == -1) {
+        			error("semop");
+    			}
+			//
+		}
 		exit(0);
 	}else if(child2 == 0){
 
-		// acquire the semaphore
-    		semops.sem_num = 0;
-    		semops.sem_op = -1;
-    		semops.sem_flg = 0;
-    		if (semop(semid, &semops, 1) == -1) {
-        		error("semop");
-    		}
-		//
-		for(int i = 0; i < 10000; ++i){
-			++semarg.val;
-		}
+		int* shared_value = (int*) shmat(shm_id, NULL, 0);
+                for(int i = 0;i<10000;++i){
+                        // acquire the semaphore
+                        semops.sem_num = 0;
+                        semops.sem_op = -1;
+                        semops.sem_flg = 0;
+                        if (semop(semid, &semops, 1) == -1) {
+                                error("semop");
+                        }
+                        //
 
-		// release the semaphore
-    		semops.sem_num = 0;
-    		semops.sem_op = 1;
-    		semops.sem_flg = 0;
-    		if (semop(semid, &semops, 1) == -1) {
-        		error("semop");
-   		 }
-		//
+                        (*shared_value)++;
+
+                        // release the semaphore
+                        semops.sem_num = 0;
+                        semops.sem_op = 1;
+                        semops.sem_flg = 0;
+                        if (semop(semid, &semops, 1) == -1) {
+                                error("semop");
+                        }
+                        //
+                }
+
 		exit(0);
 	}
 	wait(NULL);
 	wait(NULL);
-	std::cout << semarg.val << std::endl;
+	std::cout << *shared_value << std::endl;
 
 	// remove the semaphore set
     	if (semctl(semid, 0, IPC_RMID, semarg) == -1) {
