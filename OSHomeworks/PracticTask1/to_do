@@ -1,0 +1,4 @@
+1) Review init.cpp destroy.cpp client.cpp
+2) Make an object of Bank in client.cpp
+3) In destroy call Semaphore::destroy
+4) Write the makefile and some tests
