@@ -6,6 +6,7 @@
 #include <sys/sem.h>
 #include <string>
 #include <stdlib.h>
+#include <ctime>
 
 #define TABACCO 0
 #define MATCHES 1
@@ -42,14 +43,15 @@ void barmen(const std::string& inputs){
 }
 
 void smoker(int id){
-
-	int needed_item = rand()%3;
+	//srand(time(NULL));
+	//int needed_item = rand()%3;
+	int needed_item = id % 3;
 	while(true){
-		struct sembuf barmen_wait{BARMEN_SEM, -1, 0};
-		semop(sem_id, &barmen_wait, 1);
-		//if(semctl(sem_id, needed_item, GETVAL, 0) > 0){
 
 		// barmen give the item
+		struct sembuf barmen_wait{BARMEN_SEM, -1, 0};
+                semop(sem_id, &barmen_wait, 1);
+
 		struct sembuf item_recived{needed_item, -1, 0};
 		semop(sem_id, &item_recived, 1);
 
@@ -59,7 +61,7 @@ void smoker(int id){
 		}else if(needed_item == 1){
 			using_item = "matches";
 		}else{
-			using_item = "papaer";
+			using_item = "paper";
 		}
 
 		std::cout << "The process " << id << " is smoking using " << using_item <<std::endl;
@@ -67,7 +69,6 @@ void smoker(int id){
 
 		struct sembuf barmen_free{BARMEN_SEM, 1, 0};
                 semop(sem_id, &barmen_free, 1);
-		//}
 	}
 	exit(0);
 }
@@ -103,12 +104,11 @@ int main(){
 	// make processes
 	std::string inputs;
 	std::cin >> inputs;
+	int smokers_pid[3];
 	int barmen_pid = fork();
 	if(barmen_pid == 0){
 		barmen(inputs);
 	}
-
-	int smokers_pid[3];
 
 	for(int i = 0; i < 3; ++i){
 
@@ -120,6 +120,15 @@ int main(){
 		if(smokers_pid[i] == 0){
 			smoker(i);
 		}
+	}
+	sleep(inputs.size()*5);
+	std::cout << "The bar is closing!!\n";
+        for(int i = 0;i<3;++i){
+        	kill(smokers_pid[i], SIGTERM);
+        }
+
+	for(int i = 0; i < 3 + 1; ++i){
+		wait(NULL);
 	}
 	return 0;
 }
